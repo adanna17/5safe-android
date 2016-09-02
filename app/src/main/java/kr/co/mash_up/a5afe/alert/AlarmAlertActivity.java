@@ -4,6 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import kr.co.mash_up.a5afe.R;
 
@@ -14,6 +18,8 @@ public class AlarmAlertActivity extends AppCompatActivity {
 
     public static final String ALARM_SNOOZE_ACTION = "kr.co.mash_up.a5afe.ALARM_SNOOZE";
     public static final String ALARM_DISMISS_ACTION = "kr.co.mash_up.a5afe.ALARM_DISMISS";
+
+    ImageView ivGif;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +34,19 @@ public class AlarmAlertActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_alarm);
 
+        loadGif();
+
         //Alarm start
         AlarmKlaxon.start(AlarmAlertActivity.this);
+    }
+
+    private void loadGif() {
+        ivGif = (ImageView) findViewById(R.id.imageView_gif);
+        Glide.with(this)
+                .load(R.drawable.road)
+                .asGif()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(ivGif);
     }
 
     @Override
