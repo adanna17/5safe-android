@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
 
     <application
         android:allowBackup="true"
@@ -26,8 +28,22 @@
             android:name=".alert.AlarmAlertActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
+
+        <receiver
+            android:name=".LocationReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="kr.co.mash_up.a5afe.ACTION_LOCATION"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".LocationService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>
