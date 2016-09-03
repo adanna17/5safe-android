@@ -29,6 +29,12 @@
                 <action android:name="kr.co.mash_up.a5afe.ACTION_LOCATION"/>
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".LocationService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * 앱 프로세스 실행 여부에 관계없이 받아야 한다.
@@ -46,7 +47,7 @@ public class LocationReceiver extends BroadcastReceiver {
         double longitude = loc.getLongitude();  //경도
 
         Log.d(TAG, this + " Got location from " + provider + " " + latitude + ", " + longitude);
-
+        Toast.makeText(context, provider + " " + latitude + ", " + longitude, Toast.LENGTH_SHORT).show();
         //Todo: 서버에 전송
     }
 
