@@ -1,4 +1,4 @@
-package kr.co.mash_up.a5afe;
+package kr.co.mash_up.a5afe.location;
 
 import android.Manifest;
 import android.app.Service;

@@ -1,4 +1,4 @@
-package kr.co.mash_up.a5afe;
+package kr.co.mash_up.a5afe.location;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -10,7 +10,6 @@ import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 /**
