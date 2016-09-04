@@ -8,6 +8,13 @@ import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import kr.co.mash_up.a5afe.data.ServerBoolResult;
+import kr.co.mash_up.a5afe.data.remote.BackendHelper;
+import kr.co.mash_up.a5afe.login.MyAccount;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * 앱 프로세스 실행 여부에 관계없이 받아야 한다.
  * 자신이 받은 위치 정보를 서버에 전송
@@ -47,8 +54,23 @@ public class LocationReceiver extends BroadcastReceiver {
         double longitude = loc.getLongitude();  //경도
 
         Log.d(TAG, this + " Got location from " + provider + " " + latitude + ", " + longitude);
-        Toast.makeText(context, provider + " " + latitude + ", " + longitude, Toast.LENGTH_SHORT).show();
-        //Todo: 서버에 전송
+//        Toast.makeText(context, provider + " " + latitude + ", " + longitude, Toast.LENGTH_SHORT).show();
+
+        //서버에 전송
+        BackendHelper backendHelper = BackendHelper.getInstance();
+        String kakaoId = MyAccount.getInstance().getKakaoId();
+        Call<ServerBoolResult> call = backendHelper.sendCoordinate(kakaoId, latitude, longitude);
+        call.enqueue(new Callback<ServerBoolResult>() {
+            @Override
+            public void onResponse(Call<ServerBoolResult> call, Response<ServerBoolResult> response) {
+                Log.d("Coordinate", "Coordinate send result success");
+            }
+
+            @Override
+            public void onFailure(Call<ServerBoolResult> call, Throwable t) {
+                Log.e("Coordinate", " " + t.getMessage());
+            }
+        });
     }
 
     protected void onProviderEnabledChanged(boolean enabled) {

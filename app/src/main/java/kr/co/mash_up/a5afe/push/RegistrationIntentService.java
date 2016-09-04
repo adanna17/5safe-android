@@ -12,6 +12,12 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
 import kr.co.mash_up.a5afe.R;
+import kr.co.mash_up.a5afe.data.ServerBoolResult;
+import kr.co.mash_up.a5afe.data.remote.BackendHelper;
+import kr.co.mash_up.a5afe.login.MyAccount;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegistrationIntentService extends IntentService {
 
@@ -67,7 +73,20 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
-        //Todo: 서버 전송
+        BackendHelper backendHelper = BackendHelper.getInstance();
+        String kakaoId = MyAccount.getInstance().getKakaoId();
+        Call<ServerBoolResult> call = backendHelper.sendRegistration(kakaoId, token);
+        call.enqueue(new Callback<ServerBoolResult>() {
+            @Override
+            public void onResponse(Call<ServerBoolResult> call, Response<ServerBoolResult> response) {
+                Log.d("token", "token send result success");
+            }
+
+            @Override
+            public void onFailure(Call<ServerBoolResult> call, Throwable t) {
+                Log.e("token", " " + t.getMessage());
+            }
+        });
 
     }
 }

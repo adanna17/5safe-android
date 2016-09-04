@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import kr.co.mash_up.a5afe.login.LoginActivity;
 import kr.co.mash_up.a5afe.push.RegistrationIntentService;
 
 public class SplashActivity extends AppCompatActivity {
@@ -30,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 finish();
             }
         }, 1500);
