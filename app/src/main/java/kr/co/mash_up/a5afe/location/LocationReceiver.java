@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import kr.co.mash_up.a5afe.data.ServerBoolResult;
 import kr.co.mash_up.a5afe.data.remote.BackendHelper;
+import kr.co.mash_up.a5afe.data.remote.ServerResultListener;
 import kr.co.mash_up.a5afe.login.MyAccount;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,18 +60,18 @@ public class LocationReceiver extends BroadcastReceiver {
         //서버에 전송
         BackendHelper backendHelper = BackendHelper.getInstance();
         String kakaoId = MyAccount.getInstance().getKakaoId();
-        Call<ServerBoolResult> call = backendHelper.sendCoordinate(kakaoId, latitude, longitude);
-        call.enqueue(new Callback<ServerBoolResult>() {
-            @Override
-            public void onResponse(Call<ServerBoolResult> call, Response<ServerBoolResult> response) {
-                Log.d("Coordinate", "Coordinate send result success");
-            }
+        backendHelper.sendCoordinate(kakaoId, latitude, longitude,
+                new ServerResultListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("Coordinate", "Coordinate send result success");
+                    }
 
-            @Override
-            public void onFailure(Call<ServerBoolResult> call, Throwable t) {
-                Log.e("Coordinate", " " + t.getMessage());
-            }
-        });
+                    @Override
+                    public void onFailure() {
+                        Log.d("Coordinate", "Coordinate send result failure");
+                    }
+                });
     }
 
     protected void onProviderEnabledChanged(boolean enabled) {

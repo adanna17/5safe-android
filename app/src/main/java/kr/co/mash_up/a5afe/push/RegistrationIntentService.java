@@ -14,6 +14,7 @@ import com.google.android.gms.iid.InstanceID;
 import kr.co.mash_up.a5afe.R;
 import kr.co.mash_up.a5afe.data.ServerBoolResult;
 import kr.co.mash_up.a5afe.data.remote.BackendHelper;
+import kr.co.mash_up.a5afe.data.remote.ServerResultListener;
 import kr.co.mash_up.a5afe.login.MyAccount;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,18 +76,16 @@ public class RegistrationIntentService extends IntentService {
         // Add custom implementation, as needed.
         BackendHelper backendHelper = BackendHelper.getInstance();
         String kakaoId = MyAccount.getInstance().getKakaoId();
-        Call<ServerBoolResult> call = backendHelper.sendRegistration(kakaoId, token);
-        call.enqueue(new Callback<ServerBoolResult>() {
+        backendHelper.sendRegistration(kakaoId, token, new ServerResultListener() {
             @Override
-            public void onResponse(Call<ServerBoolResult> call, Response<ServerBoolResult> response) {
+            public void onSuccess() {
                 Log.d("token", "token send result success");
             }
 
             @Override
-            public void onFailure(Call<ServerBoolResult> call, Throwable t) {
-                Log.e("token", " " + t.getMessage());
+            public void onFailure() {
+                Log.d("token", "token send result failure");
             }
         });
-
     }
 }

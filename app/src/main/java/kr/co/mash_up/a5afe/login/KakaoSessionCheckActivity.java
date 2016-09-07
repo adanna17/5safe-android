@@ -17,6 +17,7 @@ import com.kakao.util.helper.log.Logger;
 import kr.co.mash_up.a5afe.MainActivity;
 import kr.co.mash_up.a5afe.data.ServerBoolResult;
 import kr.co.mash_up.a5afe.data.remote.BackendHelper;
+import kr.co.mash_up.a5afe.data.remote.ServerResultListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,21 +72,17 @@ public class KakaoSessionCheckActivity extends AppCompatActivity {
             public void onSuccess(UserProfile userProfile) {
                 mMyAccount.setKakaoId(String.valueOf(userProfile.getId()));
 
+                //Todo: Presenter로 옮긴다.
                 BackendHelper backendHelper = BackendHelper.getInstance();
-                Call<ServerBoolResult> call = backendHelper.registerUser(mMyAccount.getKakaoId());
-                call.enqueue(new Callback<ServerBoolResult>() {
+                backendHelper.registerUser(mMyAccount.getKakaoId(), new ServerResultListener() {
                     @Override
-                    public void onResponse(Call<ServerBoolResult> call, Response<ServerBoolResult> response) {
-                        if (response.body().isbResult()) {
-                            redirectMainActivity();
-                        } else {
-                            redirectMainActivity();
-                        }
+                    public void onSuccess() {
+                        redirectMainActivity();
                     }
 
                     @Override
-                    public void onFailure(Call<ServerBoolResult> call, Throwable t) {
-                        Log.e(TAG, " " + t.getMessage());
+                    public void onFailure() {
+                        redirectMainActivity();
                     }
                 });
             }
