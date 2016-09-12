@@ -1,4 +1,4 @@
-package kr.co.mash_up.a5afe;
+package kr.co.mash_up.a5afe.common;
 
 import android.app.Activity;
 import android.app.Application;
@@ -36,6 +36,12 @@ public class MosesApplication extends Application {
         instance = this;
 
         KakaoSDK.init(new KakaoSDKAdapter());
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        //Todo: 서비스 살리기
     }
 
     private static class KakaoSDKAdapter extends KakaoAdapter {

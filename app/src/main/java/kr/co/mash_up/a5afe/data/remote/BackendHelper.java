@@ -3,9 +3,19 @@ package kr.co.mash_up.a5afe.data.remote;
 
 import android.util.Log;
 
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import kr.co.mash_up.a5afe.BuildConfig;
+import kr.co.mash_up.a5afe.common.Constants;
 import kr.co.mash_up.a5afe.data.ServerBoolResult;
 import kr.co.mash_up.a5afe.login.MyAccount;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -17,10 +27,10 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
+//Todo: KaKao Id의 역할을 암호화된 토큰으로 변경
 public class BackendHelper {
 
     public static final String TAG = BackendHelper.class.getSimpleName();
-    private static final String BASE_URL = "http://172.20.10.2:3000/";
 
     private static BackendHelper instance;
     private BackendService service;
@@ -40,7 +50,7 @@ public class BackendHelper {
         OkHttpClient okHttpClient = makeOkHttpClient(makeLoggingInterceptor());
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
@@ -48,13 +58,29 @@ public class BackendHelper {
         service = retrofit.create(BackendService.class);
     }
 
+    /**
+     * OkHttpClient 생성
+     *
+     * @param httpLoggingInterceptor http Logging Interceptor
+     * @return 설정이 끝난 OkHttpClient
+     */
     private OkHttpClient makeOkHttpClient(HttpLoggingInterceptor httpLoggingInterceptor) {
         return new OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
+                .connectTimeout(Constants.CONNECT_TIMEOUT, TimeUnit.SECONDS)  //연결 타임아웃 설정
+                .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)  //읽 타임아웃 설정
+                .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)  //쓰기 타임아웃 설정
+                .addInterceptor(httpLoggingInterceptor)  //http 로깅 설정
                 .addInterceptor(new MosesHttpInterceptor())
+                .addInterceptor(new AddCookiesInterceptor())  //쿠키 셋팅
+                .addInterceptor(new ReceivedCookiesInterceptor())  //쿠키
                 .build();
     }
 
+    /**
+     * create http Logging Interceptor
+     *
+     * @return created http Logging Interceptor
+     */
     private HttpLoggingInterceptor makeLoggingInterceptor() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
                 .setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY
@@ -62,6 +88,23 @@ public class BackendHelper {
         return logging;
     }
 
+    /**
+     * create CookieManager
+     *
+     * @return Policy 설정된 CookieManager
+     */
+    private CookieManager makeCookieManager() {
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);  //cookie policy 변경
+        return cookieManager;
+    }
+
+    /**
+     * KaKao Oauth로 인증된 User 등록
+     *
+     * @param kakaoId  인증된 KaKaoId
+     * @param callback 결과 콜백
+     */
     public void registerUser(String kakaoId, final ServerResultListener callback) {
         Call<ServerBoolResult> call = service.registerUser(kakaoId);
         call.enqueue(new Callback<ServerBoolResult>() {
@@ -81,6 +124,14 @@ public class BackendHelper {
         });
     }
 
+    /**
+     * 좌표(위도, 경도) 전송
+     *
+     * @param kakaoId   인증된 KaKaoId
+     * @param latitude  위도
+     * @param longitude 경도
+     * @param callback  결과 콜백
+     */
     public void sendCoordinate(String kakaoId,
                                double latitude,
                                double longitude,
@@ -103,6 +154,13 @@ public class BackendHelper {
         });
     }
 
+    /**
+     * GCM 인증 토큰 전송
+     *
+     * @param kakaoId  인증된 KaKaoId
+     * @param token    GCM 인증 토큰
+     * @param callback 결과 콜백
+     */
     public void sendRegistration(String kakaoId,
                                  String token,
                                  final ServerResultListener callback) {

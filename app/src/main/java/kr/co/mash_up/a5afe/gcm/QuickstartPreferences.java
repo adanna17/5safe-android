@@ -1,4 +1,4 @@
-package kr.co.mash_up.a5afe.push;
+package kr.co.mash_up.a5afe.gcm;
 
 public class QuickstartPreferences {
 

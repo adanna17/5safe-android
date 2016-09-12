@@ -10,7 +10,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import kr.co.mash_up.a5afe.login.LoginActivity;
-import kr.co.mash_up.a5afe.push.RegistrationIntentService;
+import kr.co.mash_up.a5afe.gcm.RegistrationIntentService;
 
 public class SplashActivity extends AppCompatActivity {
 

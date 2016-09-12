@@ -1,4 +1,4 @@
-package kr.co.mash_up.a5afe.push;
+package kr.co.mash_up.a5afe.gcm;
 
 
 import android.app.IntentService;
@@ -12,13 +12,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
 import kr.co.mash_up.a5afe.R;
-import kr.co.mash_up.a5afe.data.ServerBoolResult;
 import kr.co.mash_up.a5afe.data.remote.BackendHelper;
 import kr.co.mash_up.a5afe.data.remote.ServerResultListener;
 import kr.co.mash_up.a5afe.login.MyAccount;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RegistrationIntentService extends IntentService {
 
