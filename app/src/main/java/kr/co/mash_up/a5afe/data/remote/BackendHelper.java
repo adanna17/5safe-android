@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import kr.co.mash_up.a5afe.BuildConfig;
 import kr.co.mash_up.a5afe.common.Constants;
+import kr.co.mash_up.a5afe.common.MosesApplication;
 import kr.co.mash_up.a5afe.data.ServerBoolResult;
 import kr.co.mash_up.a5afe.login.MyAccount;
 import okhttp3.Cookie;
@@ -69,10 +70,13 @@ public class BackendHelper {
                 .connectTimeout(Constants.CONNECT_TIMEOUT, TimeUnit.SECONDS)  //연결 타임아웃 설정
                 .readTimeout(Constants.READ_TIMEOUT, TimeUnit.SECONDS)  //읽 타임아웃 설정
                 .writeTimeout(Constants.WRITE_TIMEOUT, TimeUnit.SECONDS)  //쓰기 타임아웃 설정
+                /*
+                세션을 유지하는 쿠키관리 방법이 기존의 Interceptor를 사용하는 방식에서
+                cookieJar를 이용해 CookieManager에 위임하도록 변경
+                 */
+                .cookieJar(new JavaNetCookieJar(makeCookieManager()))  //쿠키매니저 설정
                 .addInterceptor(httpLoggingInterceptor)  //http 로깅 설정
                 .addInterceptor(new MosesHttpInterceptor())
-                .addInterceptor(new AddCookiesInterceptor())  //쿠키 셋팅
-                .addInterceptor(new ReceivedCookiesInterceptor())  //쿠키
                 .build();
     }
 
@@ -91,12 +95,12 @@ public class BackendHelper {
     /**
      * create CookieManager
      *
-     * @return Policy 설정된 CookieManager
+     * @return Cookie Store, Policy 설정된 CookieManager
      */
     private CookieManager makeCookieManager() {
-        CookieManager cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);  //cookie policy 변경
-        return cookieManager;
+        return new CookieManager(
+                new PersistentCookieStore(MosesApplication.getInstance()),
+                CookiePolicy.ACCEPT_ALL);
     }
 
     /**

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+import java.util.Map;
+
 /**
  * Created by Dong on 2016-05-13.
  */
@@ -57,6 +59,27 @@ public class PreferencesUtils {
     public static void remove(@NonNull Context context, @NonNull String key) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().remove(key).apply();
+    }
+
+    public static void clear(@NonNull Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().clear().apply();
+    }
+
+    public static boolean contains(@NonNull Context context, @NonNull String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.contains(key);
+    }
+
+    /**
+     * SharedPreferences에 저장된 값들의 키를 전부 반환
+     *
+     * @param context SharedPreferences에 접근하기 위한 Context
+     * @return Map형태 묶인 Key
+     */
+    public static Map<String, ?> getAll(@NonNull Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getAll();
     }
 
 //    public static void setPreferences(Context context, String key, Boolean value) {
